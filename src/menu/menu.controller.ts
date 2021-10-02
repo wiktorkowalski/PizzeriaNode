@@ -1,23 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { MenuItem } from './MenuItem';
+import { MenuService } from './menu.service';
+import { MenuItem } from './menuitem.entity';
 
 @Controller('menu')
 export class MenuController {
+    constructor(private readonly menuService: MenuService) {}
+
     @Get()
-    GetMenu(): MenuItem[] {
-        return exampleMenu;
+    GetMenu(): Promise<MenuItem[]> {
+        return this.menuService.findAll();
     }
 }
-
-const exampleMenu: MenuItem[] = [
-    {
-        Name: 'Calzone',
-        Category: 'Pizza',
-        Price: 10
-    },
-    {
-        Name: 'Peperoni',
-        Category: 'Pizza',
-        Price: 15
-    }
-]
