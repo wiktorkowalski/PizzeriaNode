@@ -7,7 +7,7 @@ export class MenuController {
     constructor(private readonly menuService: MenuService) {}
 
     @Get()
-    GetMenu(): Promise<MenuItem[]> {
-        return this.menuService.findAll();
+    async GetMenu(): Promise<MenuItem[]> {
+        return await this.menuService.findAll();
     }
 }

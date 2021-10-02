@@ -3,14 +3,14 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity('MenuItem')
 export class MenuItem {
     @PrimaryGeneratedColumn()
-    Id: number;
+    id: number;
 
     @Column()
-    Name: string;
+    name: string;
 
     @Column()
-    Category: string;
+    category: string;
 
     @Column()
-    Price: number;
+    price: number;
 }
