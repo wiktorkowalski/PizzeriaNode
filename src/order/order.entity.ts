@@ -11,13 +11,13 @@ export class Order {
 
     @CreateDateColumn()
     createTime?: Date;
-    
-    @Column({default: 0})
+
+    @Column({ default: 0 })
     totalPrice?: number;
 
     @Column()
     comment?: string;
-    
+
     @Column()
     email?: string;
 }

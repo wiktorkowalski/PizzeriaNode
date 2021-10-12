@@ -1,6 +1,6 @@
 import { OrderItemRequest } from "./orderItem.request";
 
-export class OrderRequest{
+export class OrderRequest {
     email?: string;
     comment?: string;
     items: OrderItemRequest[];

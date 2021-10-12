@@ -1,4 +1,4 @@
-export class OrderItemRequest{
+export class OrderItemRequest {
     menuItemId: number;
     quantity: number;
 }

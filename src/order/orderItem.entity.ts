@@ -18,6 +18,6 @@ export class OrderItem {
     @Column()
     quantity: number;
 
-    @Column({default: 0})
+    @Column({ default: 0 })
     unitPrice?: number;
 }

@@ -16,9 +16,9 @@ export class OrderService {
     private readonly orderRepository: Repository<Order>,
     @Inject('ORDERITEM_REPOSITORY')
     private readonly orderItemRepository: Repository<OrderItem>
-  ) {}
+  ) { }
 
-  async postOrder(order: OrderRequest): Promise<OrderResponse>{
+  async postOrder(order: OrderRequest): Promise<OrderResponse> {
     /// TODO: change this to use cached instead of calling DB
     const menu = await this.menuRepository.find();
     const orderEntity: Order = await this.orderRepository.save(order);
@@ -45,6 +45,7 @@ export class OrderService {
       orderItems.push(orderItemResponse);
     }));
 
+    //orderItem.save()
     await this.orderRepository.save(orderEntity);
 
     const orderResponse: OrderResponse = {
@@ -64,8 +65,8 @@ export class OrderService {
     const ordersEntities: Order[] = await this.orderRepository.find();
 
     await Promise.all(ordersEntities.map(async order => {
-      const orderItemsEntity = await this.orderItemRepository.find({where: {orderId: order.id}});
-      const orderItems: OrderItemResponse[] = orderItemsEntity.map(item => ({id: item.id, quantity: item.quantity, unitPrice: item.unitPrice}));
+      const orderItemsEntity = await this.orderItemRepository.find({ where: { orderId: order.id } });
+      const orderItems: OrderItemResponse[] = orderItemsEntity.map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
 
       const orderResponse: OrderResponse = {
         uuid: order.uuid,
@@ -83,10 +84,10 @@ export class OrderService {
   }
 
   async findOne(uuid: string): Promise<OrderResponse> {
-    const orderEntity = await this.orderRepository.findOne({where: {uuid: uuid}});
-    const orderItemsEntity = await this.orderItemRepository.find({where: {orderId: orderEntity.id}});
+    const orderEntity = await this.orderRepository.findOne({ where: { uuid: uuid } });
+    const orderItemsEntity = await this.orderItemRepository.find({ where: { orderId: orderEntity.id } });
 
-    const orderItems: OrderItemResponse[] = orderItemsEntity.map(item => ({id: item.id, quantity: item.quantity, unitPrice: item.unitPrice}));
+    const orderItems: OrderItemResponse[] = orderItemsEntity.map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
     const orderResponse: OrderResponse = {
       uuid: orderEntity.uuid,
       createTime: orderEntity.createTime,

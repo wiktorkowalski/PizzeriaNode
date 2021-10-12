@@ -1,6 +1,6 @@
 import { OrderItemResponse } from "./orderItem.response";
 
-export class OrderResponse{
+export class OrderResponse {
     uuid: string;
     createTime: Date;
     email?: string;

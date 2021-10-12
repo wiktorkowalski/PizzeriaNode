@@ -1,4 +1,4 @@
-export class OrderItemResponse{
+export class OrderItemResponse {
     id: number;
     quantity: number;
     unitPrice: number;

@@ -7,7 +7,7 @@ export class MenuService {
   constructor(
     @Inject('MENU_REPOSITORY')
     private readonly menuRepository: Repository<MenuItem>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<MenuItem[]> {
     return await this.menuRepository.find();
