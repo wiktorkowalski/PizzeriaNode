@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MenuItem } from 'src/menu/menuitem.entity';
+import { Providers } from 'src/providers';
 import { Repository } from 'typeorm';
 import { OrderRequest } from './models/order.request';
 import { OrderResponse } from './models/order.response';
@@ -10,11 +11,11 @@ import { OrderItem } from './orderItem.entity';
 @Injectable()
 export class OrderService {
   constructor(
-    @Inject('MENU_REPOSITORY')
+    @Inject(Providers.MenuRepository)
     private readonly menuRepository: Repository<MenuItem>,
-    @Inject('ORDER_REPOSITORY')
+    @Inject(Providers.OrderRepository)
     private readonly orderRepository: Repository<Order>,
-    @Inject('ORDERITEM_REPOSITORY')
+    @Inject(Providers.OrderItemRepository)
     private readonly orderItemRepository: Repository<OrderItem>
   ) { }
 
@@ -23,30 +24,22 @@ export class OrderService {
     const menu = await this.menuRepository.find();
     const orderEntity: Order = await this.orderRepository.save(order);
 
-    const orderItems: OrderItemResponse[] = [];
+    const orderItemsEntity: OrderItem[] = [];
 
     await Promise.all(order.items.map(async item => {
       const unitPrice = menu.find(x => x.id === item.menuItemId)?.price;
       orderEntity.totalPrice += unitPrice * item.quantity;
 
-      const orderItemEntity: OrderItem = await this.orderItemRepository.save({
+      orderItemsEntity.push({
         menuItemId: item.menuItemId,
         orderId: orderEntity.id,
         quantity: item.quantity,
         unitPrice: unitPrice
       });
-
-      const orderItemResponse: OrderItemResponse = {
-        id: orderItemEntity.menuItemId,
-        quantity: orderItemEntity.quantity,
-        unitPrice: unitPrice
-      };
-
-      orderItems.push(orderItemResponse);
     }));
 
-    //orderItem.save()
     await this.orderRepository.save(orderEntity);
+    const orderItems = await (await this.orderItemRepository.save(orderItemsEntity)).map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
 
     const orderResponse: OrderResponse = {
       uuid: orderEntity.uuid,

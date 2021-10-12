@@ -1,16 +1,17 @@
+import { Providers } from 'src/providers';
 import { Connection } from 'typeorm';
 import { Order } from './order.entity';
 import { OrderItem } from './orderItem.entity';
 
 export const orderProviders = [
   {
-    provide: 'ORDER_REPOSITORY',
+    provide: Providers.OrderRepository,
     useFactory: (connection: Connection) => connection.getRepository(Order),
-    inject: ['DATABASE_CONNECTION'],
+    inject: [Providers.DatabaseConnection],
   },
   {
-    provide: 'ORDERITEM_REPOSITORY',
+    provide: Providers.OrderItemRepository,
     useFactory: (connection: Connection) => connection.getRepository(OrderItem),
-    inject: ['DATABASE_CONNECTION'],
+    inject: [Providers.DatabaseConnection],
   }
 ];
