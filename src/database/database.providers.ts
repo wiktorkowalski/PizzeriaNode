@@ -1,8 +1,9 @@
+import { Providers } from 'src/providers';
 import { createConnection } from 'typeorm';
 
 export const databaseProviders = [
     {
-        provide: 'DATABASE_CONNECTION',
+        provide: Providers.DatabaseConnection,
         useFactory: async () => await createConnection({
             type: 'postgres',
             host: process.env.TYPEORM_HOST,

@@ -4,7 +4,7 @@ import { MenuItem } from './menuitem.entity';
 
 @Controller('menu')
 export class MenuController {
-    constructor(private readonly menuService: MenuService) {}
+    constructor(private readonly menuService: MenuService) { }
 
     @Get()
     async GetMenu(): Promise<MenuItem[]> {

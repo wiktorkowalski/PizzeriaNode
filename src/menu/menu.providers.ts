@@ -1,10 +1,11 @@
+import { Providers } from 'src/providers';
 import { Connection } from 'typeorm';
 import { MenuItem } from './menuitem.entity';
 
 export const menuProviders = [
   {
-    provide: 'MENU_REPOSITORY',
+    provide: Providers.MenuRepository,
     useFactory: (connection: Connection) => connection.getRepository(MenuItem),
-    inject: ['DATABASE_CONNECTION'],
+    inject: [Providers.DatabaseConnection],
   },
 ];
