@@ -26,7 +26,7 @@ export class OrderService {
 
     const orderItemsEntity: OrderItem[] = [];
 
-    await Promise.all(order.items.map(async item => {
+    order.items.map(item => {
       const unitPrice = menu.find(x => x.id === item.menuItemId)?.price;
       orderEntity.totalPrice += unitPrice * item.quantity;
 
@@ -36,10 +36,10 @@ export class OrderService {
         quantity: item.quantity,
         unitPrice: unitPrice
       });
-    }));
+    });
 
     await this.orderRepository.save(orderEntity);
-    const orderItems = await (await this.orderItemRepository.save(orderItemsEntity)).map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
+    const orderItems = (await this.orderItemRepository.save(orderItemsEntity)).map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
 
     const orderResponse: OrderResponse = {
       uuid: orderEntity.uuid,
@@ -56,10 +56,12 @@ export class OrderService {
   async findAll(): Promise<OrderResponse[]> {
     const ordersResponse: OrderResponse[] = [];
     const ordersEntities: Order[] = await this.orderRepository.find();
+    const orderItemsEntities = await this.orderItemRepository.find();
 
-    await Promise.all(ordersEntities.map(async order => {
-      const orderItemsEntity = await this.orderItemRepository.find({ where: { orderId: order.id } });
-      const orderItems: OrderItemResponse[] = orderItemsEntity.map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
+    ordersEntities.map(async order => {
+      const orderItems: OrderItemResponse[] = orderItemsEntities
+        .filter(item => item.orderId === order.id)
+        .map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
 
       const orderResponse: OrderResponse = {
         uuid: order.uuid,
@@ -71,7 +73,7 @@ export class OrderService {
       };
 
       ordersResponse.push(orderResponse);
-    }));
+    });
 
     return ordersResponse;
   }
