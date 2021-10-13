@@ -1,6 +1,6 @@
 import { MenuItem } from "./menuitem.entity";
 
-export const ExampleMenuItems: MenuItem[] = [
+export const exampleMenuItems: MenuItem[] = [
     {
         id: 1,
         category: "Pizza",

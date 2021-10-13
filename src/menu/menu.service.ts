@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Providers } from 'src/providers';
 import { Repository } from 'typeorm';
-import { ExampleMenuItems } from './exampleMenu';
+import { exampleMenuItems } from './exampleMenuItems';
 import { MenuItem } from './menuitem.entity';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class MenuService {
 
   async seedMenu() {
     if (await this.menuRepository.count() === 0) {
-      this.menuRepository.save(ExampleMenuItems);
+      this.menuRepository.save(exampleMenuItems);
       console.debug('MenuItem table content was autofilled');
     }
   }
