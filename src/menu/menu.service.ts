@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Providers } from 'src/providers';
 import { Repository } from 'typeorm';
+import { exampleMenuItems } from './exampleMenuItems';
 import { MenuItem } from './menuitem.entity';
 
 @Injectable()
@@ -8,7 +9,9 @@ export class MenuService {
   constructor(
     @Inject(Providers.MenuRepository)
     private readonly menuRepository: Repository<MenuItem>,
-  ) { }
+  ) {
+    this.seedMenu();
+  }
 
   async findAll(): Promise<MenuItem[]> {
     return await this.menuRepository.find();
@@ -16,5 +19,12 @@ export class MenuService {
 
   async findOne(id: string): Promise<MenuItem> {
     return await this.menuRepository.findOne(id);
+  }
+
+  async seedMenu() {
+    if (await this.menuRepository.count() === 0) {
+      this.menuRepository.save(exampleMenuItems);
+      console.debug('MenuItem table content was autofilled');
+    }
   }
 }

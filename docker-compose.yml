@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  postgres:
+    container_name: "pizzeria-postgres"
+    image: "postgres:14.0"
+    env_file: .compose.env
+
+  pizzeria:
+    container_name: "pizzeria-api"
+    build: .
+    env_file: .compose.env
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
