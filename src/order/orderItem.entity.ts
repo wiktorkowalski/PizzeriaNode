@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { MenuItem } from "src/menu/menuitem.entity";
 import { Order } from "./order.entity";
 
@@ -8,18 +8,14 @@ export class OrderItem {
     id?: number;
 
     @Column()
-    @ManyToOne(() => Order, order => order.id)
-    @JoinColumn()
-    orderId: number;
-
-    @Column()
-    @ManyToOne(() => MenuItem, menuItem => menuItem.id)
-    @JoinColumn()
-    menuItemId: number;
-
-    @Column()
     quantity: number;
 
     @Column({ default: 0 })
     unitPrice?: number;
+
+    @ManyToOne(() => Order, order => order)
+    order: Order;
+
+    @ManyToOne(() => MenuItem, menuItem => menuItem)
+    menuItem: MenuItem;
 }
