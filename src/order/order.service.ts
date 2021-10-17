@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MenuItem } from 'src/menu/menuitem.entity';
 import { Providers } from 'src/providers';
+import { StatusChangerService } from 'src/status/statusChanger.service';
 import { Repository } from 'typeorm';
 import { OrderRequest } from './models/order.request';
 import { OrderResponse } from './models/order.response';
@@ -11,12 +12,13 @@ import { OrderItem } from './orderItem.entity';
 @Injectable()
 export class OrderService {
   constructor(
+    private readonly statusChanger: StatusChangerService,
     @Inject(Providers.MenuRepository)
     private readonly menuRepository: Repository<MenuItem>,
     @Inject(Providers.OrderRepository)
     private readonly orderRepository: Repository<Order>,
     @Inject(Providers.OrderItemRepository)
-    private readonly orderItemRepository: Repository<OrderItem>
+    private readonly orderItemRepository: Repository<OrderItem>,
   ) { }
 
   async postOrder(order: OrderRequest): Promise<OrderResponse> {
@@ -27,14 +29,14 @@ export class OrderService {
     const orderItemsEntity: OrderItem[] = [];
 
     order.items.map(item => {
-      const unitPrice = menu.find(x => x.id === item.menuItemId)?.price;
-      orderEntity.totalPrice += unitPrice * item.quantity;
+      const menuItem = menu.find(x => x.id === item.menuItemId);
+      orderEntity.totalPrice += menuItem.price * item.quantity;
 
       orderItemsEntity.push({
-        menuItemId: item.menuItemId,
-        orderId: orderEntity.id,
+        menuItem: menuItem,
+        order: orderEntity,
         quantity: item.quantity,
-        unitPrice: unitPrice
+        unitPrice: menuItem.price
       });
     });
 
@@ -49,6 +51,7 @@ export class OrderService {
       comment: orderEntity.comment,
       items: orderItems
     };
+    this.statusChanger.registerOrder(orderResponse.uuid);
 
     return orderResponse;
   }
@@ -60,7 +63,7 @@ export class OrderService {
 
     ordersEntities.map(async order => {
       const orderItems: OrderItemResponse[] = orderItemsEntities
-        .filter(item => item.orderId === order.id)
+        .filter(item => item.order.id === order.id)
         .map(item => ({ id: item.id, quantity: item.quantity, unitPrice: item.unitPrice }));
 
       const orderResponse: OrderResponse = {
